@@ -27,17 +27,11 @@
     (slot dias)
     (slot diagnostico))
 
-(defrule casosospechoso-1a
+(defrule casosospechoso
     (paciente (nombre ?nombre))
     (paciente (enfermedadrespiratoria ?enfermedadrespiratoria&:(member$ ?enfermedadrespiratoria ?*enfermedadesrespiratorias*)))
-    (paciente (contacto ?contacto&:(member$ ?contacto ?*contactos*)))
-    =>
-    (printout t ?nombre " es caso sospechoso." crlf))
-
-(defrule casosospechoso-1b
-    (paciente (nombre ?nombre))
-    (paciente (enfermedadrespiratoria ?enfermedadrespiratoria&:(member$ ?enfermedadrespiratoria ?*enfermedadesrespiratorias*)))
-    (paciente (viaje ?viaje&:(member$ ?viaje ?*paisescontagiolocal*)))
+    (or (paciente (viaje ?viaje&:(member$ ?viaje ?*paisescontagiolocal*))) (paciente (contacto ?contacto&:(member$ ?contacto ?*contactos*))))
+    (paciente (dias ?dias&:(< ?dias 14)))
     =>
     (printout t ?nombre " es caso sospechoso." crlf))
 
