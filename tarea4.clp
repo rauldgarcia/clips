@@ -27,7 +27,8 @@
     (slot viaje)
     (slot dias)
     (slot diagnostico)
-    (slot estatus))
+    (slot status)
+    (slot niveldeteccion))
 
 (defrule casosospechoso-1a
     ?paciente <- (paciente (nombre ?nombre)
@@ -37,7 +38,7 @@
                            (diagnostico nil))
     =>
     (modify ?paciente (diagnostico casosospechoso))
-    (printout t ?nombre " es caso sospechoso." crlf))
+    (printout t ?nombre " es caso sospechoso. Propocionarle mazcarilla n95." crlf))
 
 (defrule casosospechoso-1b
     ?paciente <- (paciente (nombre ?nombre)
@@ -47,13 +48,13 @@
                            (diagnostico nil))
     =>
     (modify ?paciente (diagnostico casosospechoso))
-    (printout t ?nombre " es caso sospechoso." crlf))
+    (printout t ?nombre " es caso sospechoso. Propocionarle mazcarilla n95." crlf))
     
 (defrule casoconfirmado
     ?paciente <- (paciente (nombre ?nombre)
                            (diagnostico casoconfirmado))
     =>
-    (printout t ?nombre " es caso confirmado." crlf))
+    (printout t ?nombre " es caso confirmado. Propocionarle mazcarilla n95." crlf))
 
 (defrule identificacioncasosospechoso
     ?paciente <- (paciente (nombre ?nombre)
@@ -67,12 +68,61 @@
     =>
     (printout t "Hay que aislar a " ?nombre " en cubiculo ventilado y mantener la puerta cerrada." crlf))
 
+(defrule casointubado
+    ?paciente <- (paciente (nombre ?nombre)
+                           (diagnostico casosospechoso)
+                           (status intubado))
+    =>
+    (printout t "Hacer prueba de covid con lavado bronquioalveolar a " ?nombre "." crlf))
+
+(defrule casofallecido
+    ?paciente <- (paciente (nombre ?nombre)
+                           (diagnostico casosospechoso)
+                           (status fallecido))
+    =>
+    (printout t "Hacer prueba de covid con biopsia pulmonar a " ?nombre "." crlf))
+
+(defrule casonormal
+    ?paciente <- (paciente (nombre ?nombre)
+                           (diagnostico casosospechoso)
+                           (status nil))
+    =>
+    (printout t "Hacer prueba de covid con exudado nasofaríngeo y faríngeo a " ?nombre "." crlf))
+
+(defrule deteccionivelprimero
+    ?paciente <- (paciente (nombre ?nombre)
+                           (diagnostico casosospechoso)
+                           (niveldeteccion primero))
+    =>
+    (printout t "Coordinar caso de " ?nombre "con jurisdiccion sanitaria." crlf))
+
+(defrule deteccionivelsegundo
+    ?paciente <- (paciente (nombre ?nombre)
+                           (diagnostico casosospechoso)
+                           (niveldeteccion segundo))
+    =>
+    (printout t "Coordinar caso de " ?nombre "con epidemiologo." crlf))
+
+(defrule deteccioniveltercero
+    ?paciente <- (paciente (nombre ?nombre)
+                           (diagnostico casosospechoso)
+                           (niveldeteccion tercero))
+    =>
+    (printout t "Coordinar caso de " ?nombre " con epidemiologo." crlf))
+
 (deffacts prueba
     (paciente (nombre pancho) 
               (enfermedadrespiratoria leve) 
               (contacto casoconfirmado) 
-              (dias 10)))
-
-(deffacts prueba2
-    (paciente (nombre maria) 
-              (diagnostico casoconfirmado)))
+              (dias 10)
+              (status intubado))
+    (paciente (nombre maria)
+              (diagnostico casoconfirmado))
+    (paciente (nombre eugenio)
+              (diagnostico casosospechoso)
+              (status fallecido))
+    (paciente (nombre meriyein)
+              (enfermedadrespiratoria aguda)
+              (viaje china)
+              (dias 13)
+              (niveldeteccion segundo)))
